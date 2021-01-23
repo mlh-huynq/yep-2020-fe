@@ -1,14 +1,18 @@
-export const HN_PRICE_QUANTITY = {
-  special: 1,
-  first: 10,
-  second: 5,
-  third: 3
-};
-export const DN_PRICE_QUANTITY = {
-  special: 1,
-  first: 20,
-  second: 10,
-  third: 5
+export const QUANTITY = {
+  hn: {
+    1: 10,
+    2: 5,
+    3: 3
+  },
+  dn: {
+    1: 20,
+    2: 10,
+    3: 5
+  }
 };
 
 export const INTERVAL = 100; //ms
+export const RESULT_INTERVAL = 3000; //ms
+
+export const SOCKET_URL = 'ws://128.199.177.40:3000';
+export const API_URL = 'http://128.199.177.40:3000';
