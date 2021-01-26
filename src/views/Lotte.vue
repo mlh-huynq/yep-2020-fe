@@ -26,8 +26,10 @@ export default {
     },
     beforeRouteEnter(to, from, next) {
         if (
-            ['hn', 'dn'].includes(to.params.location) &&
-            [1, 2, 3].includes(parseInt(to.params.id))
+            (['hn', 'dn'].includes(to.params.location) &&
+                [1, 2, 3, 4, 5].includes(parseInt(to.params.id))) ||
+            (['hn-guest', 'dn-guest'].includes(to.params.location) &&
+                parseInt(to.params.id) === 1)
         ) {
             next();
         } else {

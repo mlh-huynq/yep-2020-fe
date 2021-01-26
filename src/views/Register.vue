@@ -34,7 +34,7 @@
 <script>
 export default {
     beforeRouteEnter(to, from, next) {
-        if (['hn', 'dn'].includes(to.params.location)) {
+        if (['hn', 'dn', 'hn-guest', 'dn-guest'].includes(to.params.location)) {
             next();
         } else {
             next('/404');
