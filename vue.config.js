@@ -3,6 +3,12 @@ const PrerenderSPAPlugin = require('prerender-spa-plugin');
 
 module.exports = {
   configureWebpack: {
+    resolve: {
+      extensions: ['.js', '.vue'],
+      alias: {
+        '~': __dirname + '/src/assets'
+      }
+    },
     plugins: [
       new PrerenderSPAPlugin({
         // Required - The path to the webpack-outputted app to prerender.
@@ -28,6 +34,8 @@ module.exports = {
           '/quay-so/dn-guest/1',
           '/dang-ky/hn',
           '/dang-ky/dn',
+          'lixi/hn',
+          'lixi/dn',
         ]
       })
     ]

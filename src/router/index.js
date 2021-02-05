@@ -11,6 +11,12 @@ const routes = [
     component: () => import(/* webpackChunkName: "home" */ '../views/Home.vue')
   },
   {
+    path: '/lixi/:location',
+    name: 'LuckyMoney',
+    component: () =>
+      import(/* webpackChunkName: "result" */ '../views/LuckyMoney.vue')
+  },
+  {
     path: '/ket-qua',
     name: 'Result',
     component: () =>
