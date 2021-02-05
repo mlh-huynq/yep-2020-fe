@@ -12,7 +12,7 @@
             {{ number || '???' }}
             <div class="cover">
                 <div class="spin-btn" @click="spin">
-                    <img src="~/assets/lucky.svg" alt="">
+                    <img src="../assets/lucky.svg" alt="">
                 </div>
             </div>
         </div>
