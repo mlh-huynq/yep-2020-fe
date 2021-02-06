@@ -1,21 +1,21 @@
 <template>
     <div class="wrapper">
-        <div class="results-area">
-            <h2>Các số đã trúng thưởng</h2>
-            <span v-for="res in results" :key="res" class="item">{{
-                res
-            }}</span>
-        </div>
-        <div class="lucky-area">
-
-        <div :class="{ 'lucky-money': true, spinning }">
-            {{ number || '???' }}
-            <div class="cover">
-                <div class="spin-btn" @click="spin">
-                    <img src="../assets/lucky.svg" alt="">
-                </div>
+        <transition-group name="result-group" tag="div" class="results-area">
+            <div v-for="res in results" :key="res" class="item">
+                <img src="../assets/lucky.svg" />{{ res }}
             </div>
-        </div>
+        </transition-group>
+        <div class="lucky-area">
+            <div class="lucky-money">
+                {{ number || '???' }}
+                <transition name="lixi">
+                    <div v-if="!spinning" class="cover">
+                        <div class="spin-btn" @click="spin">
+                            <img src="../assets/lucky.svg" />
+                        </div>
+                    </div>
+                </transition>
+            </div>
         </div>
         <button @click="reset" class="btn btn-danger">reset</button>
         <transition name="congrats">
@@ -63,17 +63,18 @@ export default {
                 .map((r, i) => r + i)
         };
     },
-    
     mounted() {
-         document.body.onkeyup = e => {
-            if((e.keyCode === 32 || e.code === 'Space') && !this.spinning){
-                this.spin()
-            }
-            if(e.keyCode === 13 || e.code === 'Enter') {
-                if(!this.spinning) {
-                    this.spin()
-                } else if(this.result) {
-                    this.skip()
+        document.body.onkeyup = e => {
+            if (
+                e.keyCode === 32 ||
+                e.code === 'Space' ||
+                e.keyCode === 13 ||
+                e.code === 'Enter'
+            ) {
+                if (!this.spinning) {
+                    this.spin();
+                } else if (this.result) {
+                    this.skip();
                 }
             }
         };
@@ -105,7 +106,7 @@ export default {
             setTimeout(() => {
                 clearInterval(this.spinInterval);
                 this.result = this.number;
-                this.results.push(this.number);
+
                 localStorage.setItem('results', JSON.stringify(this.results));
             }, 3000);
         },
@@ -114,6 +115,7 @@ export default {
             localStorage.removeItem('results');
         },
         skip() {
+            this.results.push(this.number);
             this.spinning = false;
             this.number = null;
             this.result = null;
@@ -137,13 +139,34 @@ export default {
     display: flex;
     align-items: center;
     justify-content: center;
+    padding: 30px 0;
 }
 .results-area {
     width: 100%;
+    display: grid;
+    grid-gap: 8px;
+    grid-template-columns: repeat(auto-fill, minmax(48px, 1fr));
     .item {
-        font-size: 20px;
-        margin-right: 12px;
+        display: flex;
+        transition: all 1s;
+        flex-direction: column;
+        font-size: 24px;
+        width: 48px;
+        align-items: center;
+        color: yellow;
+        background: red;
+        padding: 8px 0 6px;
+        margin:0 auto 8px;
+        border-radius: 4px;
+        img {
+            width: 16px;
+            display: block;
+        }
     }
+}
+.result-group-enter {
+    opacity: 0;
+    transform: translateX(30px);
 }
 .result {
     position: fixed;
@@ -198,11 +221,6 @@ export default {
     text-align: center;
     position: relative;
     overflow: hidden;
-    &.spinning {
-        .cover {
-            display: none;
-        }
-    }
     .cover {
         position: absolute;
         top: 0;
@@ -213,11 +231,12 @@ export default {
         display: flex;
         justify-content: center;
         align-items: center;
+        transition: all 0.15s linear;
         .spin-btn {
             width: 100px;
             height: 100px;
             cursor: pointer;
-            opacity: 0;
+            opacity: 1;
             transition: opacity 0.15s linear 0.05s;
             display: flex;
             align-items: center;
@@ -233,7 +252,7 @@ export default {
             position: absolute;
             width: 100%;
             left: 0;
-            height: 0;
+            height: 50%;
             display: block;
             z-index: -1;
             background: red;
@@ -246,15 +265,14 @@ export default {
             bottom: 0;
         }
     }
-    &:hover {
-        .cover {
-            .spin-btn {
-                opacity: 1;
-            }
-            &::before,
-            &::after {
-                height: 50%;
-            }
+    .lixi-enter,
+    .lixi-leave-to {
+        .spin-btn {
+            opacity: 0;
+        }
+        &::before,
+        &::after {
+            height: 0;
         }
     }
 }
