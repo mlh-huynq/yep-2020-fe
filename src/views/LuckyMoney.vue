@@ -1,7 +1,7 @@
 <template>
     <div class="wrapper">
         <transition-group name="result-group" tag="div" class="results-area">
-            <div v-for="res in results" :key="res" class="item">
+            <div v-for="res in displayResults" :key="res" class="item">
                 <img src="../assets/lucky.svg" />{{ res }}
             </div>
         </transition-group>
@@ -16,15 +16,20 @@
                     </div>
                 </transition>
             </div>
+            <img
+                src="https://monstar-lab.com/global/wp-content/themes/ml_global_2019_theme/public/images/logos/logo-ml_white_3x.png"
+                alt="monstar-lab"
+                id="logo"
+            />
         </div>
-        <button @click="reset" class="btn btn-danger">reset</button>
+        <img src="../assets/reset.svg" class="reset-btn" @click="reset" />
         <transition name="congrats">
             <div class="result" v-show="result">
                 <div class="result-box">
-                    <h1>Xin chúc mừng</h1>
+                    <h1>おめでとう</h1>
                     <div class="result-text">{{ result }}</div>
                     <a href="javascript:;" @click="skip" class="continue"
-                        >Tiếp tục</a
+                        >継続する</a
                     >
                 </div>
                 <canvas class="result-confetti" ref="confetti" />
@@ -47,6 +52,9 @@ export default {
     computed: {
         availableNumbers() {
             return this.totalNumbers.filter(n => !this.results.includes(n));
+        },
+        displayResults() {
+            return this.results.slice(-16);
         }
     },
     data() {
@@ -111,8 +119,10 @@ export default {
             }, 3000);
         },
         reset() {
-            this.results = [];
-            localStorage.removeItem('results');
+            if (confirm('Do you really want to reset the results?')) {
+                this.results = [];
+                localStorage.removeItem('results');
+            }
         },
         skip() {
             this.results.push(this.number);
@@ -126,37 +136,47 @@ export default {
 
 <style lang="scss" scoped>
 .wrapper {
-    width: 90%;
-    max-width: 1000px;
     min-height: 100vh;
     margin: auto;
-    padding: 30px 0 60px;
+    padding: 30px 5% 60px;
     display: flex;
     flex-direction: column;
+    align-items: center;
+    background: url(../assets/bg.jpg) center/cover no-repeat;
 }
 .lucky-area {
     flex-grow: 1;
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-direction: column;
     padding: 30px 0;
+    #logo {
+        margin-top: 60px;
+        width: 500px;
+        max-width: 90%;
+    }
 }
 .results-area {
-    width: 100%;
-    display: grid;
-    grid-gap: 8px;
-    grid-template-columns: repeat(auto-fill, minmax(48px, 1fr));
+    width: 900px;
+    max-width: 90%;
+    display: flex;
+    min-height: 100px;
+    overflow-x: auto;
     .item {
         display: flex;
         transition: all 1s;
         flex-direction: column;
+        height: fit-content;
         font-size: 24px;
-        width: 48px;
+        flex: 0 1 48px;
+        min-width: 48px;
         align-items: center;
         color: yellow;
+        border: 1px solid yellow;
         background: red;
         padding: 8px 0 6px;
-        margin:0 auto 8px;
+        margin: 0 4px;
         border-radius: 4px;
         img {
             width: 16px;
@@ -167,6 +187,13 @@ export default {
 .result-group-enter {
     opacity: 0;
     transform: translateX(30px);
+}
+.result-group-leave-to {
+    opacity: 0;
+    transform: translateX(-30px);
+}
+.result-group-leave-active {
+    position: absolute;
 }
 .result {
     position: fixed;
@@ -216,11 +243,12 @@ export default {
     width: 240px;
     line-height: 320px;
     border-radius: 12px;
-    border: 2px solid red;
+    border: 2px solid yellow;
     font-size: 120px;
     text-align: center;
     position: relative;
     overflow: hidden;
+    background: #fff;
     .cover {
         position: absolute;
         top: 0;
@@ -275,5 +303,14 @@ export default {
             height: 0;
         }
     }
+}
+.reset-btn {
+    width: 20px;
+    height: 20px;
+    display: block;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    cursor: pointer;
 }
 </style>
