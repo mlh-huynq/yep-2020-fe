@@ -162,7 +162,9 @@ export default {
     max-width: 90%;
     display: flex;
     min-height: 100px;
-    overflow-x: auto;
+    @media screen and (max-width: 1080px) {
+        overflow-x: auto;
+    }
     .item {
         display: flex;
         transition: all 1s;
