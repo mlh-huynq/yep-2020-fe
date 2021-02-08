@@ -6,7 +6,7 @@
             </div>
         </transition-group>
         <div class="lucky-area">
-            <div class="lucky-money">
+            <div class="lucky-money" @click.self="stop">
                 {{ number || '???' }}
                 <transition name="lixi">
                     <div v-if="!spinning" class="cover">
@@ -21,6 +21,7 @@
                 alt="monstar-lab"
                 id="logo"
             />
+            <img src="../assets/logo.png" alt="lucky-money" id="lucky-money" />
         </div>
         <img src="../assets/reset.svg" class="reset-btn" @click="reset" />
         <transition name="congrats">
@@ -61,6 +62,7 @@ export default {
         const totalNumber = this.$route.params.location === 'dn' ? 350 : 150;
         const resultsStorage = localStorage.getItem('results');
         return {
+            disable: false,
             number: null,
             spinning: false,
             result: null,
@@ -83,6 +85,10 @@ export default {
                     this.spin();
                 } else if (this.result) {
                     this.skip();
+                    this.disable = true;
+                    setTimeout(() => (this.disable = false), 3000);
+                } else {
+                    this.stop();
                 }
             }
         };
@@ -108,15 +114,11 @@ export default {
             ];
         },
         spin() {
-            this.spinning = true;
-            this.getNumber();
-            this.spinInterval = setInterval(this.getNumber, 100);
-            setTimeout(() => {
-                clearInterval(this.spinInterval);
-                this.result = this.number;
-
-                localStorage.setItem('results', JSON.stringify(this.results));
-            }, 3000);
+            if (!this.disable) {
+                this.spinning = true;
+                this.getNumber();
+                this.spinInterval = setInterval(this.getNumber, 100);
+            }
         },
         reset() {
             if (confirm('Do you really want to reset the results?')) {
@@ -125,10 +127,19 @@ export default {
             }
         },
         skip() {
-            this.results.push(this.number);
-            this.spinning = false;
-            this.number = null;
-            this.result = null;
+            if (this.spinning && this.result) {
+                this.results.push(this.number);
+                this.spinning = false;
+                this.number = null;
+                this.result = null;
+            }
+        },
+        stop() {
+            if (this.spinning && !this.result) {
+                clearInterval(this.spinInterval);
+                this.result = this.number;
+                localStorage.setItem('results', JSON.stringify(this.results));
+            }
         }
     }
 };
@@ -153,8 +164,13 @@ export default {
     padding: 30px 0;
     #logo {
         margin-top: 60px;
-        width: 500px;
+        width: 600px;
         max-width: 90%;
+    }
+    #lucky-money {
+        margin-top: 12px;
+        width: 400px;
+        max-width: 60%;
     }
 }
 .results-area {
