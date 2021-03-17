@@ -16,7 +16,7 @@
             </thead>
             <tbody>
                 <tr v-for="(numbers, id) in results.hn" :key="id">
-                    <td>{{ prizeTexts[id] }}</td>
+                    <td>{{ prizeList[id] }}</td>
                     <td>
                         <div class="d-flex">
                             <div
@@ -44,7 +44,7 @@
             </thead>
             <tbody>
                 <tr v-for="(numbers, id) in results.dn" :key="id">
-                    <td>{{ prizeTexts[id] }}</td>
+                    <td>{{ prizeList[id] }}</td>
                     <td>
                         <div
                             v-for="no in numbers"
@@ -64,26 +64,27 @@
 </template>
 
 <script>
+import { prizeList } from '@/helpers/constants';
 import io from 'socket.io-client';
 export default {
     data() {
         return {
             number: null,
-            prizeTexts: {
-                1: 'Giải phụ 1',
-                2: 'Giải phụ 2',
-                3: 'Giải phụ 3'
-            },
+            prizeList,
             results: {
                 hn: {
                     1: [],
                     2: [],
-                    3: []
+                    3: [],
+                    4: [],
+                    5: []
                 },
                 dn: {
                     1: [],
                     2: [],
-                    3: []
+                    3: [],
+                    4: [],
+                    5: []
                 }
             }
         };
@@ -99,11 +100,9 @@ export default {
             console.log(data);
         });
         this.socket.on('hn', data => {
-            console.log('hn', data);
             this.results.hn = data;
         });
         this.socket.on('dn', data => {
-            console.log('dn', data);
             this.results.dn = data;
         });
     },
@@ -132,7 +131,7 @@ export default {
         th,
         td {
             &:first-child {
-                width: 150px;
+                width: 200px;
                 vertical-align: baseline;
             }
             border: 1px solid #555;

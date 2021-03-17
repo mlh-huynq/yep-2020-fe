@@ -1,29 +1,43 @@
 <template>
     <div class="nav">
-        <button class="btn btn-primary" @click="run1" :disabled="!enabled['1']">
-            Giải phụ 1
-        </button>
-        <button class="btn btn-primary" @click="run2" :disabled="!enabled['2']">
-            Giải phụ 2
-        </button>
-        <button class="btn btn-primary" @click="run3" :disabled="!enabled['3']">
-            Giải phụ 3
-        </button>
-        <button class="btn btn-danger" @click="reset" >
-            Xóa cơ sở dữ liệu
-        </button>
+        <template v-for="(name, id) in prizeList">
+            <button
+                v-if="
+                    ($route.params.location === 'hn' && parseInt(id) !== 5) ||
+                        ($route.params.location === 'dn' && parseInt(id) === 5)
+                "
+                :key="id"
+                class="btn btn-primary"
+                @click="run(id)"
+                :disabled="!enabled[id]"
+            >
+                {{ name }}
+            </button>
+        </template>
     </div>
 </template>
 
 <script>
+import { prizeList } from '@/helpers/constants';
 import io from 'socket.io-client';
 export default {
+    beforeRouteEnter(to, from, next) {
+        if (['hn', 'dn'].includes(to.params.location)) {
+            next();
+        } else {
+            next('/404');
+        }
+    },
     data() {
         return {
+            prizeList,
             enabled: {
                 1: false,
                 2: false,
-                3: false
+                3: false,
+                4: false,
+                5: false,
+                6: false
             }
         };
     },
@@ -44,30 +58,9 @@ export default {
         });
     },
     methods: {
-        run1() {
-            if (this.enabled['1']) {
-                this.socket.emit('stop', 1);
-            }
-        },
-        run2() {
-            if (this.enabled['2']) {
-                this.socket.emit('stop', 2);
-            }
-        },
-        run3() {
-            if (this.enabled['3']) {
-                this.socket.emit('stop', 3);
-            }
-        },
-        async reset() {
-            const isErase = confirm('Bạn có chắc muốn xóa hết dữ liệu không?')
-            if(isErase) {
-                const res = await this.$axios.post('/reset-db')
-                if(res) {
-                    alert('Xóa dữ liệu thành công!')
-                } else {
-                    alert('Xóa dữ liệu thất bại!')
-                }
+        run(id) {
+            if (this.enabled[id]) {
+                this.socket.emit('stop', id);
             }
         }
     },
@@ -86,7 +79,7 @@ export default {
     min-height: 100vh;
     padding-bottom: 50px;
     .btn {
-        min-width: 200px;
+        min-width: 250px;
         margin-bottom: 12px;
     }
 }

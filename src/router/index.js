@@ -11,29 +11,18 @@ const routes = [
     component: () => import(/* webpackChunkName: "home" */ '../views/Home.vue')
   },
   {
-    path: '/lixi/:location',
-    name: 'LuckyMoney',
-    component: () =>
-      import(/* webpackChunkName: "result" */ '../views/LuckyMoney.vue')
-  },
-  {
     path: '/ket-qua',
     name: 'Result',
     component: () =>
       import(/* webpackChunkName: "result" */ '../views/Result.vue')
   },
   {
-    path: '/dieu-khien',
+    path: '/dieu-khien/:location',
     name: 'Control',
     component: () =>
       import(/* webpackChunkName: "control" */ '../views/Control.vue')
   },
-  {
-    path: '/ha-noi',
-    name: 'hanoi-nav',
-    component: () =>
-      import(/* webpackChunkName: "hanoi nav" */ '../views/Hanoi.vue')
-  },
+
   {
     path: '/dang-ky/:location',
     name: 'register',
@@ -47,10 +36,15 @@ const routes = [
       import(/* webpackChunkName: "lotte" */ '../views/Lotte.vue')
   },
   {
-    path: '/da-nang',
-    name: 'danang-nav',
+    path: '/list/:location',
+    name: 'list',
+    component: () => import(/* webpackChunkName: "list" */ '../views/List.vue')
+  },
+  {
+    path: '/unused/:location',
+    name: 'unused',
     component: () =>
-      import(/* webpackChunkName: "danang nav" */ '../views/Danang.vue')
+      import(/* webpackChunkName: "unused" */ '../views/Unused.vue')
   },
   {
     path: '*',
