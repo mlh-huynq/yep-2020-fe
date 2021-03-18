@@ -122,7 +122,8 @@ export default {
     outline: none;
     border: none;
     &:disabled {
-        // background: #888b8d;
+        background: #888b8d;
+        color: #eff0f0;
         pointer-events: none;
     }
 }
