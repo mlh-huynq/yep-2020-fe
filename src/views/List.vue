@@ -3,9 +3,21 @@
         <router-link
             v-for="(name, id) in prizeList"
             :key="id"
-            :to="`/quay-so/${$route.params.location}/${id}`"
+            :to="`/lotte/${$route.params.location}/${id}`"
             class="btn btn-primary"
             >{{ name }}</router-link
+        >
+        <hr />
+        <hr />
+        <router-link
+            :to="`/control/${$route.params.location}`"
+            class="btn btn-primary"
+            >Trang điều khiển</router-link
+        >
+        <router-link
+            :to="`/unused/${$route.params.location}`"
+            class="btn btn-primary"
+            >Trang loại bỏ số</router-link
         >
     </div>
 </template>

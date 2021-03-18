@@ -77,14 +77,16 @@ export default {
                     2: [],
                     3: [],
                     4: [],
-                    5: []
+                    5: [],
+                    6: []
                 },
                 dn: {
                     1: [],
                     2: [],
                     3: [],
                     4: [],
-                    5: []
+                    5: [],
+                    6: []
                 }
             }
         };
@@ -95,9 +97,6 @@ export default {
             query: {
                 page: 'result'
             }
-        });
-        this.socket.on('init', data => {
-            console.log(data);
         });
         this.socket.on('hn', data => {
             this.results.hn = data;
@@ -114,7 +113,7 @@ export default {
 
 <style lang="scss" scoped>
 .result-number {
-    width: 10%;
+    width: 12.5%;
     min-width: 60px;
     float: left;
     &.active {

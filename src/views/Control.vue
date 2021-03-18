@@ -49,11 +49,9 @@ export default {
             }
         });
         this.socket.on('active', prizeId => {
-            console.log(1, prizeId);
             this.enabled[prizeId] = true;
         });
         this.socket.on('deactive', prizeId => {
-            console.log(2, prizeId);
             this.enabled[prizeId] = false;
         });
     },

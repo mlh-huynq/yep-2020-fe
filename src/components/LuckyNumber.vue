@@ -10,9 +10,11 @@
 import { INTERVAL } from '@/helpers/constants';
 export default {
     props: {
-        numbers: Array,
         result: Number,
-        done: Boolean
+        done: Boolean,
+        special: Boolean,
+        employeeNumbers: Array,
+        guestNumbers: Array
     },
     data() {
         return {
@@ -24,14 +26,21 @@ export default {
             return;
         }
         this.run = setInterval(() => {
-            const random = Math.floor(Math.random() * this.numbers.length);
-            this.number = this.numbers[random];
-        }, this.interval || INTERVAL);
+            this.getNumber(this.numbers);
+        }, INTERVAL);
+    },
+    computed: {
+        numbers() {
+            return [...this.guestNumbers, ...this.employeeNumbers];
+        }
     },
     watch: {
         done(val) {
             if (val) {
                 clearInterval(this.run);
+                this.getNumber(
+                    this.special ? this.guestNumbers : this.employeeNumbers
+                );
                 this.$emit('finish', this.number);
             }
         }
@@ -39,6 +48,11 @@ export default {
     beforeDestroy() {
         if (this.run) {
             clearInterval(this.run);
+        }
+    },
+    methods: {
+        getNumber(list) {
+            this.number = list[Math.floor(Math.random() * list.length)];
         }
     }
 };

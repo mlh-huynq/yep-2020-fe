@@ -11,26 +11,26 @@ const routes = [
     component: () => import(/* webpackChunkName: "home" */ '../views/Home.vue')
   },
   {
-    path: '/ket-qua',
+    path: '/result',
     name: 'Result',
     component: () =>
       import(/* webpackChunkName: "result" */ '../views/Result.vue')
   },
   {
-    path: '/dieu-khien/:location',
+    path: '/control/:location',
     name: 'Control',
     component: () =>
       import(/* webpackChunkName: "control" */ '../views/Control.vue')
   },
 
   {
-    path: '/dang-ky/:location',
+    path: '/register/:location',
     name: 'register',
     component: () =>
       import(/* webpackChunkName: "register" */ '../views/Register.vue')
   },
   {
-    path: '/quay-so/:location/:id',
+    path: '/lotte/:location/:id',
     name: 'lotte',
     component: () =>
       import(/* webpackChunkName: "lotte" */ '../views/Lotte.vue')

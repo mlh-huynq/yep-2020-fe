@@ -17,15 +17,12 @@
                 {{ no }}
             </div>
         </div>
-        <div class="send-btn">
-            <button class="btn btn-primary ">
-                Gửi
-            </button>
-        </div>
     </div>
 </template>
 
 <script>
+import io from 'socket.io-client';
+import { SOCKET_URL } from '@/helpers/constants';
 export default {
     beforeRouteEnter(to, from, next) {
         if (['hn', 'dn'].includes(to.params.location)) {
@@ -39,6 +36,23 @@ export default {
             number: '',
             numbers: []
         };
+    },
+    mounted() {
+        this.socket = io(SOCKET_URL, {
+            transports: ['websocket'],
+            query: {
+                location: this.$route.params.location,
+                page: 'ignore_number'
+            }
+        });
+        this.socket.on('ignore', data => (this.numbers = data));
+        this.socket.on('success', number => {
+            this.numbers.push(number);
+            this.number = '';
+        });
+        this.socket.on('delete-success', number => {
+            this.numbers = this.numbers.filter(n => n !== number);
+        });
     },
     computed: {
         location() {
@@ -55,13 +69,14 @@ export default {
     methods: {
         add() {
             if (!this.numbers.includes(this.number)) {
-                this.numbers.push(this.number);
+                this.socket.emit('submit', { number: this.number });
+            } else {
                 this.number = '';
             }
         },
         remove(number) {
             if (this.numbers.includes(number)) {
-                this.numbers = this.numbers.filter(n => n !== number);
+                this.socket.emit('delete', { number });
             }
         }
     }

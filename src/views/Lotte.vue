@@ -6,7 +6,9 @@
                 :key="i"
                 :result="slot.result"
                 :done="slot.done"
-                :numbers="availableNumbers"
+                :employee-numbers="employeeNumbers"
+                :guest-numbers="guestNumbers"
+                :special="specialIndex === i"
                 @finish="onFinish(slot, $event)"
             />
         </div>
@@ -26,10 +28,8 @@ export default {
     },
     beforeRouteEnter(to, from, next) {
         if (
-            (['hn', 'dn'].includes(to.params.location) &&
-                [1, 2, 3, 4, 5].includes(parseInt(to.params.id))) ||
-            (['hn-guest', 'dn-guest'].includes(to.params.location) &&
-                parseInt(to.params.id) === 1)
+            ['hn', 'dn'].includes(to.params.location) &&
+            [1, 2, 3, 4, 5, 6].includes(parseInt(to.params.id))
         ) {
             next();
         } else {
@@ -38,17 +38,21 @@ export default {
     },
     mounted() {
         const { location, id } = this.$route.params;
+        this.total = QUANTITY[location][id];
+        if (parseInt(id) === 6) {
+            this.specialIndex = Math.floor(Math.random() * this.total);
+        }
         this.socket = io(SOCKET_URL, {
             transports: ['websocket'],
             query: {
                 location: this.$route.params.location,
-                prizeId: parseInt(this.$route.params.id)
+                prizeId: parseInt(id)
             }
         });
         this.socket.on('init', data => {
-            const total = QUANTITY[location][id];
-            this.availableNumbers = data.availableNumbers;
-            this.slots = Array(total)
+            this.employeeNumbers = data.emplyeeNumbers;
+            this.guestNumbers = data.guestNumbers;
+            this.slots = Array(this.total)
                 .fill(null)
                 .map((r, i) => ({
                     result: data.prizeNumbers[i] || null,
@@ -57,24 +61,41 @@ export default {
 
             this.ready = true;
             if (data.isStopping) {
-                this.run = setInterval(this.done, RESULT_INTERVAL);
+                this.run = setInterval(this.done, this.interval);
             }
         });
         this.socket.on('stop', prizeId => {
-            if (prizeId === parseInt(this.$route.params.id)) {
-                this.done();
-                this.run = setInterval(this.done, RESULT_INTERVAL);
+            if (parseInt(prizeId) === parseInt(id)) {
+                // this.done();
+                this.run = setInterval(this.done, this.interval);
             }
         });
     },
     data() {
         return {
-            availableNumbers: [],
+            total: 0,
+            employeeNumbers: [],
+            guestNumbers: [],
             slots: [],
             disable: false,
             key: 1,
-            ready: false
+            ready: false,
+            specialIndex: null
         };
+    },
+    computed: {
+        interval() {
+            const { location, id } = this.$route.params;
+            const time =
+                RESULT_INTERVAL * { 1: 1, 2: 1, 3: 4, 4: 4, 5: 2, 6: 2 }[id];
+            if (location === 'dn') {
+                if (parseInt(id) === 6) {
+                    return (time / 3) * 2;
+                }
+                return time / 2;
+            }
+            return time;
+        }
     },
     methods: {
         done() {
@@ -92,9 +113,14 @@ export default {
         onFinish(slot, number) {
             slot.done = true;
             slot.result = number;
-            this.availableNumbers = this.availableNumbers.filter(
-                r => r !== number
-            );
+            if (this.employeeNumbers.includes(number)) {
+                this.employeeNumbers = this.employeeNumbers.filter(
+                    r => r !== number
+                );
+            }
+            if (this.guestNumbers.includes(number)) {
+                this.guestNumbers = this.guestNumbers.filter(r => r !== number);
+            }
             this.socket.emit('result', { ...this.$route.params, number });
         }
     },
