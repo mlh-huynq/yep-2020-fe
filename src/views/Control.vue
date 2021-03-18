@@ -115,12 +115,13 @@ export default {
 .button {
     background: #53575a;
     color: #ffff00;
-    font-size: 24px;
+    font-size: 20px;
     width: 200px;
     height: 100px;
     text-transform: uppercase;
     outline: none;
     border: none;
+    white-space: nowrap;
     &:disabled {
         background: #888b8d;
         color: #eff0f0;
