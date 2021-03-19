@@ -1,16 +1,19 @@
 <template>
     <div v-if="ready" class="wrapper">
-        <div class="row justify-content-center">
-            <LuckyNumber
-                v-for="(slot, i) in slots"
-                :key="i"
-                :result="slot.result"
-                :done="slot.done"
-                :employee-numbers="employeeNumbers"
-                :guest-numbers="guestNumbers"
-                :special="specialIndex === i"
-                @finish="onFinish(slot, $event)"
-            />
+        <h1 class="title">{{ prizeList[$route.params.id] }}</h1>
+        <div class="box">
+            <div class="row justify-content-center">
+                <LuckyNumber
+                    v-for="(slot, i) in slots"
+                    :key="i"
+                    :result="slot.result"
+                    :done="slot.done"
+                    :employee-numbers="employeeNumbers"
+                    :guest-numbers="guestNumbers"
+                    :special="specialIndex === i"
+                    @finish="onFinish(slot, $event)"
+                />
+            </div>
         </div>
     </div>
     <Loading v-else />
@@ -19,7 +22,12 @@
 <script>
 import LuckyNumber from '@/components/LuckyNumber.vue';
 import Loading from '@/components/Loading.vue';
-import { RESULT_INTERVAL, SOCKET_URL, QUANTITY } from '@/helpers/constants';
+import {
+    RESULT_INTERVAL,
+    SOCKET_URL,
+    QUANTITY,
+    prizeList
+} from '@/helpers/constants';
 import io from 'socket.io-client';
 export default {
     components: {
@@ -73,6 +81,7 @@ export default {
     },
     data() {
         return {
+            prizeList,
             total: 0,
             employeeNumbers: [],
             guestNumbers: [],
@@ -87,7 +96,7 @@ export default {
         interval() {
             const { location, id } = this.$route.params;
             const time =
-                RESULT_INTERVAL * { 1: 1, 2: 1, 3: 4, 4: 4, 5: 2, 6: 2 }[id];
+                RESULT_INTERVAL * { 1: 1, 2: 1, 3: 2, 4: 2, 5: 2, 6: 2 }[id];
             if (location === 'dn') {
                 if (parseInt(id) === 6) {
                     return (time / 3) * 2;
@@ -135,12 +144,22 @@ export default {
 
 <style lang="scss" scoped>
 .wrapper {
-    width: 90%;
-    max-width: 1000px;
-    margin: auto;
-    padding: 30px 0 60px;
     display: flex;
-    align-items: center;
+    flex-direction: column;
+    padding-bottom: 80px;
     justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: #53575a url('../assets/bg.png') center 40px / 90% auto no-repeat;
+}
+.box {
+    max-width: 600px;
+}
+
+.title {
+    color: #ffff00;
+    font-size: 48px;
+    text-transform: uppercase;
+    margin-bottom: 40px;
 }
 </style>

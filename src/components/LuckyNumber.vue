@@ -65,20 +65,15 @@ export default {
 }
 .lucky-box {
     text-align: center;
-    width: 160px;
-    padding: 30px 12px;
-    border: 1px solid #555;
-    border-radius: 12px;
+    width: 120px;
+    height: 120px;
+    line-height: 120px;
     margin-bottom: 20px;
-    cursor: pointer;
-    &:not(.active) {
-        opacity: 0.6;
-        cursor: default;
-        pointer-events: none;
-    }
+    background: #ffff00;
     &__number {
-        font-size: 40px;
-        line-height: 2;
+        font-size: 50px;
+        color: #53575a;
+        font-weight: 500;
     }
 }
 </style>

@@ -75,6 +75,7 @@ export default {
         run(id) {
             if (this.enabled[id]) {
                 this.socket.emit('stop', id);
+                this.enabled[id] = false;
             }
         }
     },
