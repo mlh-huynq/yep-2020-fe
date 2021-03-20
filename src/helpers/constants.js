@@ -18,16 +18,16 @@ export const QUANTITY = {
 };
 
 export const prizeList = {
-  1: 'Happy Prize 1',
-  2: 'Happy Prize 2',
-  3: 'Happy Prize 3',
-  4: 'Jackpot Prize',
-  5: 'Special Prize 1',
-  6: 'Special Prize 2'
+  1: 'Lucky Draw 1',
+  2: 'Lucky Draw 2',
+  3: 'Lucky Draw 3',
+  4: 'Special Prize',
+  5: "Mizuno's Gift",
+  6: "Matsunaga's Gift"
 };
 
 export const INTERVAL = 50; //ms
-export const RESULT_INTERVAL = 3000; //ms
+export const RESULT_INTERVAL = 1500; //ms
 
 export const SOCKET_URL = 'ws://128.199.177.40:3000';
 export const API_URL = 'http://128.199.177.40:3000';

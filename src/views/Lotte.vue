@@ -1,20 +1,24 @@
 <template>
     <div v-if="ready" class="wrapper">
-        <h1 class="title">{{ prizeList[$route.params.id] }}</h1>
-        <div class="box">
-            <div class="row justify-content-center">
-                <LuckyNumber
-                    v-for="(slot, i) in slots"
-                    :key="i"
-                    :result="slot.result"
-                    :done="slot.done"
-                    :employee-numbers="employeeNumbers"
-                    :guest-numbers="guestNumbers"
-                    :special="specialIndex === i"
-                    @finish="onFinish(slot, $event)"
-                />
+        <div class="main">
+            <h1 class="title">{{ prizeList[$route.params.id] }}</h1>
+            <div class="box">
+                <div class="row justify-content-center">
+                    <LuckyNumber
+                        v-for="(slot, i) in slots"
+                        :key="i"
+                        :result="slot.result"
+                        :done="slot.done"
+                        :employee-numbers="employeeNumbers"
+                        :guest-numbers="guestNumbers"
+                        :special="specialIndex === i"
+                        @finish="onFinish(slot, $event)"
+                    />
+                </div>
             </div>
         </div>
+        <div class="location">{{ location }}</div>
+        <canvas id="confetti" />
     </div>
     <Loading v-else />
 </template>
@@ -22,6 +26,7 @@
 <script>
 import LuckyNumber from '@/components/LuckyNumber.vue';
 import Loading from '@/components/Loading.vue';
+import ConfettiGenerator from 'confetti-js';
 import {
     RESULT_INTERVAL,
     SOCKET_URL,
@@ -29,6 +34,7 @@ import {
     prizeList
 } from '@/helpers/constants';
 import io from 'socket.io-client';
+// import { Fireworks } from 'fireworks-js';
 export default {
     components: {
         LuckyNumber,
@@ -71,6 +77,26 @@ export default {
             if (data.isStopping) {
                 this.run = setInterval(this.done, this.interval);
             }
+            this.$nextTick(() => {
+                this.confetti = new ConfettiGenerator({
+                    target: document.getElementById('confetti'),
+                    props: Array(14)
+                        .fill(null)
+                        .map((r, i) => ({
+                            type: 'svg',
+                            src: require(`../assets/confetti/confetti${i}.svg`)
+                        })),
+                    // colors: [
+                    //     [255, 255, 0]
+                    //     // [125, 233, 255],
+                    //     // [168, 241, 127],
+                    //     // [255, 94, 153],
+                    //     // [255, 202, 0]
+                    // ],
+                    size: 1.8,
+                    clock: 40
+                });
+            });
         });
         this.socket.on('stop', prizeId => {
             if (parseInt(prizeId) === parseInt(id)) {
@@ -96,14 +122,25 @@ export default {
         interval() {
             const { location, id } = this.$route.params;
             const time =
-                RESULT_INTERVAL * { 1: 1, 2: 1, 3: 2, 4: 2, 5: 2, 6: 2 }[id];
+                RESULT_INTERVAL *
+                { 1: 1, 2: 1, 3: 2, 4: 2, 5: 2, 6: 4 / 3 }[id];
             if (location === 'dn') {
                 if (parseInt(id) === 6) {
-                    return (time / 3) * 2;
+                    return (time / 4) * 3;
                 }
                 return time / 2;
             }
             return time;
+        },
+        location() {
+            switch (this.$route.params.location) {
+                case 'hn':
+                    return 'Hà Nội';
+                case 'dn':
+                    return 'Đà Nẵng';
+                default:
+                    return '';
+            }
         }
     },
     methods: {
@@ -114,6 +151,9 @@ export default {
                     slot.done = true;
                     if (i === this.slots.length - 1) {
                         clearInterval(this.run);
+                        if (this.confetti) {
+                            this.confetti.render();
+                        }
                     }
                     return;
                 }
@@ -144,16 +184,42 @@ export default {
 
 <style lang="scss" scoped>
 .wrapper {
+    position: relative;
+    min-height: 100vh;
+    background: #53575a url('../assets/square3.png') 80px 40px no-repeat;
+}
+%pos {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+.main {
+    @extend %pos;
     display: flex;
     flex-direction: column;
-    padding-bottom: 80px;
+    padding-bottom: 40px;
     justify-content: center;
     align-items: center;
-    min-height: 100vh;
-    background: #53575a url('../assets/bg.png') center 40px / 90% auto no-repeat;
+    z-index: 2;
+}
+.location {
+    color: #ffff00;
+    position: absolute;
+    top: 40px;
+    right: 80px;
+    font-size: 40px;
+    text-transform: uppercase;
+    line-height: 1;
+}
+#confetti,
+#firework {
+    @extend %pos;
+    z-index: 1;
 }
 .box {
-    max-width: 600px;
+    max-width: 500px;
 }
 
 .title {
@@ -161,5 +227,12 @@ export default {
     font-size: 48px;
     text-transform: uppercase;
     margin-bottom: 40px;
+    animation: scale 2s ease infinite;
+}
+@keyframes scale {
+    50% {
+        transform: scale(1.2);
+        letter-spacing: 8px;
+    }
 }
 </style>

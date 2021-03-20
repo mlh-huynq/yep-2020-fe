@@ -5,10 +5,11 @@
                 <div
                     class="col-30 col-sm-20 my-4"
                     v-if="
-                        ($route.params.location === 'hn' &&
-                            parseInt(id) !== 5) ||
-                            ($route.params.location === 'dn' &&
-                                parseInt(id) === 5)
+                        parseInt(id) === current &&
+                            (($route.params.location === 'hn' &&
+                                parseInt(id) !== 5) ||
+                                ($route.params.location === 'dn' &&
+                                    parseInt(id) === 5))
                     "
                     :key="id"
                 >
@@ -47,6 +48,7 @@ export default {
                 5: '水野さん',
                 6: '社長'
             },
+            current: this.$route.params.location === 'dn' ? 5 : 1,
             enabled: {
                 1: false,
                 2: false,
@@ -75,7 +77,9 @@ export default {
         run(id) {
             if (this.enabled[id]) {
                 this.socket.emit('stop', id);
-                this.enabled[id] = false;
+                if (this.$route.params.location === 'hn') {
+                    this.current = this.current === 4 ? 6 : this.current + 1;
+                }
             }
         }
     },

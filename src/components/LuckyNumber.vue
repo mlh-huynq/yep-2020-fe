@@ -65,9 +65,9 @@ export default {
 }
 .lucky-box {
     text-align: center;
-    width: 120px;
-    height: 120px;
-    line-height: 120px;
+    width: 100px;
+    height: 100px;
+    line-height: 100px;
     margin-bottom: 20px;
     background: #ffff00;
     &__number {
