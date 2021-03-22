@@ -20,7 +20,6 @@
             </div>
         </div>
         <div class="location">{{ location }}</div>
-        <canvas v-show="isFinish" id="confetti" />
     </div>
     <Loading v-else />
 </template>
@@ -28,7 +27,7 @@
 <script>
 import LuckyNumber from '@/components/LuckyNumber.vue';
 import Loading from '@/components/Loading.vue';
-import ConfettiGenerator from 'confetti-js';
+import confetti from 'canvas-confetti';
 import {
     RESULT_INTERVAL,
     SOCKET_URL,
@@ -36,7 +35,6 @@ import {
     prizeList
 } from '@/helpers/constants';
 import io from 'socket.io-client';
-// import { Fireworks } from 'fireworks-js';
 export default {
     components: {
         LuckyNumber,
@@ -79,27 +77,6 @@ export default {
             if (data.isStopping) {
                 this.run = setInterval(this.done, this.interval);
             }
-            this.$nextTick(() => {
-                this.confetti = new ConfettiGenerator({
-                    target: document.getElementById('confetti'),
-                    props: Array(14)
-                        .fill(null)
-                        .map((r, i) => ({
-                            type: 'svg',
-                            src: require(`../assets/confetti/confetti${i}.svg`)
-                        })),
-                    // colors: [
-                    //     [255, 255, 0]
-                    //     // [125, 233, 255],
-                    //     // [168, 241, 127],
-                    //     // [255, 94, 153],
-                    //     // [255, 202, 0]
-                    // ],
-                    size: 1.8,
-                    clock: 80
-                });
-                this.confetti.render();
-            });
         });
         this.socket.on('stop', prizeId => {
             if (parseInt(prizeId) === parseInt(id)) {
@@ -156,6 +133,7 @@ export default {
                     if (i === this.slots.length - 1) {
                         clearInterval(this.run);
                         this.isFinish = true;
+                        this.runFirework();
                     }
                     return;
                 }
@@ -173,12 +151,58 @@ export default {
                 this.guestNumbers = this.guestNumbers.filter(r => r !== number);
             }
             this.socket.emit('result', { ...this.$route.params, number });
+        },
+        runFirework() {
+            const duration = 1 * 60 * 1000;
+            const animationEnd = Date.now() + duration;
+            const defaults = {
+                startVelocity: 30,
+                spread: 300,
+                ticks: 60,
+                zIndex: 1
+            };
+
+            function randomInRange(min, max) {
+                return Math.random() * (max - min) + min;
+            }
+
+            this.firework = setInterval(function() {
+                let timeLeft = animationEnd - Date.now();
+
+                if (timeLeft <= 0) {
+                    return clearInterval(this.firework);
+                }
+
+                const particleCount = 75 * (timeLeft / duration);
+                // since particles fall down, start a bit higher than random
+                confetti(
+                    Object.assign({}, defaults, {
+                        particleCount,
+                        origin: {
+                            x: randomInRange(0.1, 0.4),
+                            y: Math.random() - 0.2
+                        }
+                    })
+                );
+                confetti(
+                    Object.assign({}, defaults, {
+                        particleCount,
+                        origin: {
+                            x: randomInRange(0.6, 0.9),
+                            y: Math.random() - 0.2
+                        }
+                    })
+                );
+            }, 250);
         }
     },
     beforeDestroy() {
         this.socket.disconnect();
         if (this.run) {
             clearInterval(this.run);
+        }
+        if (this.firework) {
+            clearInterval(this.firework);
         }
     }
 };

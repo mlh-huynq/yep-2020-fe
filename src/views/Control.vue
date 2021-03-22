@@ -67,7 +67,7 @@ export default {
             }
         });
         this.socket.on('init', ({ lastPrizeId }) => {
-            this.current = parseInt(lastPrizeId || 0) + 1;
+            this.current = (parseInt(lastPrizeId || 0) % 6) + 1;
         });
         this.socket.on('active', prizeId => {
             this.enabled[prizeId] = true;
@@ -87,6 +87,7 @@ export default {
                         this.current += 1;
                     }
                 }
+                this.enabled[id] = false;
             }
         }
     },
@@ -135,8 +136,8 @@ export default {
     border: none;
     white-space: nowrap;
     &:disabled {
-        background: #888b8d;
-        color: #eff0f0;
+        background: #eff0f0;
+        color: #888b8d;
         pointer-events: none;
     }
 }
