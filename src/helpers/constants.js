@@ -29,5 +29,5 @@ export const prizeList = {
 export const INTERVAL = 50; //ms
 export const RESULT_INTERVAL = 1500; //ms
 
-export const SOCKET_URL = 'ws://128.199.177.40:3000';
+export const SOCKET_URL = 'ws://13.212.202.91:3000';
 export const API_URL = 'http://128.199.177.40:3000';

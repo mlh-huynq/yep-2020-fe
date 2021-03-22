@@ -66,7 +66,6 @@ export default {
             }
         });
         this.socket.on('init', data => {
-            console.log(data);
             this.employeeNumbers = data.emplyeeNumbers;
             this.guestNumbers = data.guestNumbers;
             this.slots = Array(this.total)

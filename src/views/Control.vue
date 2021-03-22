@@ -31,7 +31,7 @@
 </template>
 
 <script>
-import { prizeList } from '@/helpers/constants';
+import { prizeList, SOCKET_URL } from '@/helpers/constants';
 import io from 'socket.io-client';
 export default {
     beforeRouteEnter(to, from, next) {
@@ -60,7 +60,7 @@ export default {
         };
     },
     mounted() {
-        this.socket = io('ws://128.199.177.40:3000', {
+        this.socket = io(SOCKET_URL, {
             transports: ['websocket'],
             query: {
                 page: 'control'
