@@ -1,7 +1,9 @@
 <template>
     <div v-if="ready" class="wrapper">
         <div class="main">
-            <h1 class="title">{{ prizeList[$route.params.id] }}</h1>
+            <h1 :class="{ title: true, done: isFinish }">
+                {{ prizeList[$route.params.id] }}
+            </h1>
             <div class="box">
                 <div class="row justify-content-center">
                     <LuckyNumber
@@ -18,7 +20,7 @@
             </div>
         </div>
         <div class="location">{{ location }}</div>
-        <canvas id="confetti" />
+        <canvas v-show="isFinish" id="confetti" />
     </div>
     <Loading v-else />
 </template>
@@ -64,6 +66,7 @@ export default {
             }
         });
         this.socket.on('init', data => {
+            console.log(data);
             this.employeeNumbers = data.emplyeeNumbers;
             this.guestNumbers = data.guestNumbers;
             this.slots = Array(this.total)
@@ -94,8 +97,9 @@ export default {
                     //     // [255, 202, 0]
                     // ],
                     size: 1.8,
-                    clock: 40
+                    clock: 80
                 });
+                this.confetti.render();
             });
         });
         this.socket.on('stop', prizeId => {
@@ -115,7 +119,8 @@ export default {
             disable: false,
             key: 1,
             ready: false,
-            specialIndex: null
+            specialIndex: null,
+            isFinish: false
         };
     },
     computed: {
@@ -151,9 +156,7 @@ export default {
                     slot.done = true;
                     if (i === this.slots.length - 1) {
                         clearInterval(this.run);
-                        if (this.confetti) {
-                            this.confetti.render();
-                        }
+                        this.isFinish = true;
                     }
                     return;
                 }
@@ -227,7 +230,9 @@ export default {
     font-size: 48px;
     text-transform: uppercase;
     margin-bottom: 40px;
-    animation: scale 2s ease infinite;
+    &.done {
+        animation: scale 2s ease infinite;
+    }
 }
 @keyframes scale {
     50% {

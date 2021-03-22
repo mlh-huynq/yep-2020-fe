@@ -5,11 +5,11 @@
                 <div
                     class="col-30 col-sm-20 my-4"
                     v-if="
-                        parseInt(id) === current &&
-                            (($route.params.location === 'hn' &&
-                                parseInt(id) !== 5) ||
-                                ($route.params.location === 'dn' &&
-                                    parseInt(id) === 5))
+                        (parseInt(id) === current &&
+                            $route.params.location === 'hn' &&
+                            parseInt(id) !== 5) ||
+                            ($route.params.location === 'dn' &&
+                                parseInt(id) === 5)
                     "
                     :key="id"
                 >
@@ -66,6 +66,9 @@ export default {
                 page: 'control'
             }
         });
+        this.socket.on('init', ({ lastPrizeId }) => {
+            this.current = parseInt(lastPrizeId || 0) + 1;
+        });
         this.socket.on('active', prizeId => {
             this.enabled[prizeId] = true;
         });
@@ -78,7 +81,11 @@ export default {
             if (this.enabled[id]) {
                 this.socket.emit('stop', id);
                 if (this.$route.params.location === 'hn') {
-                    this.current = this.current === 4 ? 6 : this.current + 1;
+                    if (this.current === 4) {
+                        this.current = 6;
+                    } else if (this.current !== 6) {
+                        this.current += 1;
+                    }
                 }
             }
         }
