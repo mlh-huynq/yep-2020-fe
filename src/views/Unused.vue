@@ -1,12 +1,11 @@
 <template>
     <div>
-        <h1>Số thừa</h1>
+        <h1 class="py-2 px-5">Danh sách số không hiệu lực</h1>
         <hr />
-        <div class="mb-3">
+        <form class="my-3 form" @submit.prevent="add">
             <input type="number" v-model.number="number" />
-            <button @click="add">Thêm</button>
-        </div>
-        <h2 v-if="location">{{ location }}</h2>
+            <button type="submit">Thêm</button>
+        </form>
         <div v-if="numbers.length" class="d-flex box">
             <div
                 v-for="no in numbers"
@@ -94,6 +93,12 @@ export default {
         display: table;
         clear: both;
     }
+}
+.form {
+    text-align: center;
+}
+.location {
+    padding: 0 10%;
 }
 .unused-number {
     width: 10%;

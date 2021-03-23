@@ -20,6 +20,14 @@
             </div>
         </div>
         <div class="location">{{ location }}</div>
+        <div class="navs">
+            <router-link :class="{ show: navs.prev }" :to="navs.prev || ''">
+                <img src="../assets/caret-left.svg" alt="" />
+            </router-link>
+            <router-link :class="{ show: navs.next }" :to="navs.next || ''">
+                <img src="../assets/caret-right.svg" alt="" />
+            </router-link>
+        </div>
     </div>
     <Loading v-else />
 </template>
@@ -122,6 +130,33 @@ export default {
                 default:
                     return '';
             }
+        },
+        navs() {
+            const { name, params } = this.$route;
+            const location = params.location;
+            const id = parseInt(params.id);
+            return {
+                prev:
+                    id > 1
+                        ? {
+                              name,
+                              params: {
+                                  location,
+                                  id: id - 1
+                              }
+                          }
+                        : null,
+                next:
+                    id < 6
+                        ? {
+                              name,
+                              params: {
+                                  location,
+                                  id: id + 1
+                              }
+                          }
+                        : null
+            };
         }
     },
     methods: {
@@ -256,6 +291,30 @@ export default {
     &.done {
         animation: scale 2s ease infinite;
     }
+}
+.navs {
+    position: absolute;
+    width: 100%;
+    left: 0;
+    bottom: 20px;
+    text-align: right;
+    padding-right: 20px;
+    a {
+        margin: 4px;
+        img {
+            height: 40px;
+        }
+        opacity: 0.3;
+        &:not(.show) {
+            visibility: hidden;
+            pointer-events: none;
+        }
+        &:hover {
+            opacity: 0.6;
+            transform: scale(1.2);
+        }
+    }
+    z-index: 5;
 }
 @keyframes scale {
     50% {
