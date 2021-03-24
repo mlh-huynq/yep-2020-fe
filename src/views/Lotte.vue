@@ -19,11 +19,17 @@
                 </div>
             </div>
         </div>
-        <div class="location">{{ location }}</div>
-        <div class="navs">
-            <router-link :class="{ show: navs.prev }" :to="navs.prev || ''">
-                <img src="../assets/caret-left.svg" alt="" />
-            </router-link>
+        <router-link
+            :to="{
+                name: 'list',
+                params: {
+                    location: $route.params.location
+                }
+            }"
+            class="location"
+            >{{ location }}</router-link
+        >
+        <div v-if="isFinish" class="navs">
             <router-link :class="{ show: navs.next }" :to="navs.next || ''">
                 <img src="../assets/caret-right.svg" alt="" />
             </router-link>
@@ -188,7 +194,7 @@ export default {
             this.socket.emit('result', { ...this.$route.params, number });
         },
         runFirework() {
-            const duration = 1 * 60 * 1000;
+            const duration = 5 * 60 * 1000;
             const animationEnd = Date.now() + duration;
             const defaults = {
                 startVelocity: 30,
@@ -273,6 +279,8 @@ export default {
     font-size: 40px;
     text-transform: uppercase;
     line-height: 1;
+    z-index: 3;
+    text-decoration: none !important;
 }
 #confetti,
 #firework {
