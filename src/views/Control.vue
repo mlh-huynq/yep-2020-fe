@@ -3,7 +3,7 @@
         <div class="row justify-content-center">
             <template v-for="(name, id) in prizeList">
                 <div
-                    class="col-30 col-sm-20 my-4"
+                    class="control-btn my-4"
                     v-if="
                         (parseInt(id) === current &&
                             $route.params.location === 'hn' &&
@@ -13,16 +13,33 @@
                     "
                     :key="id"
                 >
-                    <button
-                        class="button"
-                        @click="run(id)"
-                        :disabled="!enabled[id]"
-                    >
+                    <div class="prize-title">
                         {{ name }}
                         <template v-if="note[id]">
                             <br />
                             {{ note[id] }}
                         </template>
+                    </div>
+                    <button
+                        class="button"
+                        @click="run(id)"
+                        :disabled="!enabled[id]"
+                    >
+                        <img
+                            class="play"
+                            :src="enabled[id] ? rightIcon : rightDarkIcon"
+                            alt=""
+                        />
+                        <img
+                            class="play"
+                            :src="enabled[id] ? rightIcon : rightDarkIcon"
+                            alt=""
+                        />
+                        <!-- <img
+                            class="play"
+                            :src="enabled[id] ? rightIcon : rightDarkIcon"
+                            alt=""
+                        /> -->
                     </button>
                 </div>
             </template>
@@ -33,6 +50,8 @@
 <script>
 import { prizeList, SOCKET_URL } from '@/helpers/constants';
 import io from 'socket.io-client';
+import rightIcon from '../assets/caret-right.svg';
+import rightDarkIcon from '../assets/caret-right-dark.svg';
 export default {
     beforeRouteEnter(to, from, next) {
         if (['hn', 'dn'].includes(to.params.location)) {
@@ -56,7 +75,9 @@ export default {
                 4: false,
                 5: false,
                 6: false
-            }
+            },
+            rightIcon,
+            rightDarkIcon
         };
     },
     mounted() {
@@ -129,16 +150,71 @@ export default {
     background: #53575a;
     color: #ffff00;
     font-size: 20px;
-    width: 200px;
-    height: 100px;
+    width: 300px;
+    height: 160px;
     text-transform: uppercase;
     outline: none;
     border: none;
     white-space: nowrap;
+    position: relative;
+    z-index: 2;
+    &:not(:disabled) {
+        .play {
+            &:nth-child(1) {
+                animation: anim1 0.6s ease-in infinite;
+            }
+            &:nth-child(2) {
+                animation: anim2 0.6s ease-in infinite;
+            }
+        }
+    }
     &:disabled {
         background: #eff0f0;
         color: #888b8d;
         pointer-events: none;
+    }
+    .play {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 40px;
+    }
+}
+.prize-title {
+    color: #53575a;
+    font-size: 40px;
+    margin-bottom: 20px;
+}
+@keyframes anim1 {
+    0%,
+    100% {
+        width: 40px;
+    }
+    20% {
+        width: 32px;
+    }
+    40% {
+        width: 54px;
+    }
+}
+@keyframes anim2 {
+    0%,
+    20% {
+        opacity: 0.5;
+        width: 32px;
+    }
+    40% {
+        opacity: 0.5;
+        width: 48px;
+    }
+    60% {
+        opacity: 0.2;
+        width: 64px;
+    }
+    100% {
+        opacity: 0;
+        width: 72px;
     }
 }
 </style>

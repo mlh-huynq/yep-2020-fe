@@ -5,9 +5,9 @@
         <router-link to="/result" class="btn btn-primary"
             >Trang kết quả</router-link
         >
-        <button class="btn btn-danger" @click="reset">
+        <!-- <button class="btn btn-danger" @click="reset">
             Xóa cơ sở dữ liệu
-        </button>
+        </button> -->
     </div>
 </template>
 
